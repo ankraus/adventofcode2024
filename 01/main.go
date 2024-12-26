@@ -11,6 +11,22 @@ import (
 
 func main() {
 
+	listA, listB := readListsFromFile()
+
+	if len(listA) != len(listB) {
+		log.Fatal("Slices are not the same length")
+	}
+
+	differenceSum := calculateDifferenceSum(listA, listB)
+
+	log.Printf("Total sum of distances: %d", differenceSum)
+
+	similarityScore := calculateSimilarityScore(listA, listB)
+
+	log.Printf("Similarity Score: %d", similarityScore)
+}
+
+func readListsFromFile() ([]int, []int) {
 	f, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -35,12 +51,10 @@ func main() {
 		}
 		counter++
 	}
-	log.Printf("Total numbers: %d\n", counter)
+	return listA, listB
+}
 
-	if len(listA) != len(listB) {
-		log.Fatal("Slices are not the same length")
-	}
-
+func calculateDifferenceSum(listA []int, listB []int) int {
 	sum := 0
 
 	for i := range len(listA) {
@@ -50,8 +64,20 @@ func main() {
 		}
 		sum += diff
 	}
+	return sum
+}
 
-	log.Printf("Total sum of distances: %d", sum)
+func calculateSimilarityScore(listA []int, listB []int) int {
+	index := make(map[int]int)
+	for _, n := range listB {
+		index[n]++
+	}
+
+	sum := 0
+	for _, n := range listA {
+		sum += n * index[n]
+	}
+	return sum
 }
 
 func insert(list []int, n int) []int {
