@@ -11,12 +11,17 @@ import (
 func main() {
 	list := readReportsFromFile()
 	count := 0
+	countWithDeletion := 0
 	for _, r := range list {
 		if isSafe(r) {
 			count++
+		} else if checkAllDeletions(r) {
+			countWithDeletion++
 		}
 	}
 	log.Printf("Safe count: %v", count)
+	log.Printf("Safe count with deletions: %v", countWithDeletion)
+	log.Printf("Total safe: %v", count+countWithDeletion)
 }
 
 func readReportsFromFile() [][]int {
@@ -58,12 +63,30 @@ func isSafe(report []int) bool {
 			return false
 		}
 		difference := report[i-1] - report[i]
-		if difference < 0 {
-			difference = -difference
-		}
-		if difference > 3 {
+		if difference > 3 || difference < -3 {
 			return false
 		}
 	}
 	return true
+}
+
+func isSafeWithDeletions(input []int, index int) bool {
+	r := make([]int, len(input))
+	copy(r, input)
+
+	if index == len(r)-1 {
+		r = r[:index]
+	} else {
+		r = append(r[:index], r[index+1:]...)
+	}
+	return isSafe(r)
+}
+
+func checkAllDeletions(report []int) bool {
+	for i := 0; i < len(report); i++ {
+		if isSafeWithDeletions(report, i) {
+			return true
+		}
+	}
+	return false
 }
