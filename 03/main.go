@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+const doRegexStr = `^(.*?)(don't\(\))|do\(\)(.*?)(don't\(\))`
 const mulRegexStr = `mul\(\d{1,3}\,\d{1,3}\)`
 const paramsRegexStr = `\d{1,3}`
 
@@ -32,9 +33,12 @@ func main() {
 }
 
 func findTerms(input string) []string {
+	doRegex := regexp.MustCompile(doRegexStr)
 	mulRegex := regexp.MustCompile(mulRegexStr)
 	paramRegex := regexp.MustCompile(paramsRegexStr)
-	mulStrs := mulRegex.FindAllString(input, -1)
+	input = strings.ReplaceAll(input, "\n", "")
+	doStrs := doRegex.FindAllString(input, -1)
+	mulStrs := mulRegex.FindAllString(strings.Join(doStrs, " "), -1)
 	paramStrs := paramRegex.FindAllString(strings.Join(mulStrs, " "), -1)
 	return paramStrs
 }
