@@ -4,7 +4,6 @@ import (
 	"image"
 	"log"
 	"os"
-	"regexp"
 	"strings"
 )
 
@@ -35,19 +34,12 @@ func main() {
 		return words
 	}
 
-	count := 0
+	c1, c2 := 0, 0
 	for p := range grid {
-		count += strings.Count(strings.Join(adjancency(p, 4), " "), "XMAS")
+		c1 += strings.Count(strings.Join(adjancency(p, 4), " "), "XMAS")
+		c2 += strings.Count("AMAMASASAMAMAS", strings.Join(adjancency(p, 2)[4:], ""))
 	}
 
-	log.Printf("Count: %d", count)
-}
-
-func findHorizontal(input []string) int {
-	r := regexp.MustCompile(`(?:XMAS)|(?:SAMX)`)
-	sum := 0
-	for _, s := range input {
-		sum += len(r.FindAllStringIndex(s, -1))
-	}
-	return sum
+	log.Printf("Count 1: %d", c1)
+	log.Printf("Count 2: %d", c2)
 }
